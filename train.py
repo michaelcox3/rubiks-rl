@@ -1,6 +1,3 @@
-import sys
-print(sys.path)
-
 import gymnasium as gym
 from dqn.model import QNetwork
 from rubiks.env import RubiksCubeEnv
