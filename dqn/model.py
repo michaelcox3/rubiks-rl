@@ -2,20 +2,19 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-class QNetwork(nn.Module):
-    def __init__(self, input_dim, output_dim, hidden_dims=[128, 128]):
-        super(QNetwork, self).__init__()
 
-        layers = []
-        dims = [input_dim] + hidden_dims # Add input dimension to the list of hidden dimensions
+class DQN(nn.Module):
 
-        for i in range(len(dims) - 1):
-            layers.append(nn.Linear(dims[i], dims[i + 1]))
-            layers.append(nn.ReLU())
+    def __init__(self, n_observations, n_actions):
+        super(DQN, self).__init__()
+        self.layer1 = nn.Linear(n_observations, 128)
+        self.layer2 = nn.Linear(128, 128)
+        self.layer3 = nn.Linear(128, n_actions)
 
-        layers.append(nn.Linear(dims[-1], output_dim))
-
-        self.net = nn.Sequential(*layers)
-
+    # Forward is called when you call model(x).
+    # Called with either one element to determine next action, or a batch
+    # during optimization. Returns tensor([[left0exp,right0exp]...]).
     def forward(self, x):
-        return self.net(x)
+        x = F.relu(self.layer1(x))
+        x = F.relu(self.layer2(x))
+        return self.layer3(x)
