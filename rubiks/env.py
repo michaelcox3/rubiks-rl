@@ -38,7 +38,7 @@ class RubiksCubeEnv(gym.Env):
         obs = self._get_obs()
         terminated = self._is_solved()
         truncated = False  # or define a max_step limit and use it
-        reward = 1.0 if terminated else -0.1
+        reward = 1.0 if terminated else 0.0
         info = {}
 
         return obs, reward, terminated, truncated, info
@@ -47,6 +47,8 @@ class RubiksCubeEnv(gym.Env):
         print(self.cube.state)
 
     def _get_obs(self):
+        # Flatten the cube state to a 1D array
+        # For a 3x3 cube, shape will be (6, 9) -> flattened to (54,)
         return self.cube.state.flatten()
 
     def _is_solved(self):

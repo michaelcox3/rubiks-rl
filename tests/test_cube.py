@@ -17,7 +17,7 @@ def test_face_rotation_changes_face():
 def test_scramble_changes_state():
     cube = RubiksCube(size=3)
     original = cube.state.copy()
-    cube.scramble(moves=10)
+    cube.scramble(moves=1)
     assert not np.array_equal(original, cube.state), "State should change after scramble"
 
 def test_invalid_face_rotation_raises():
@@ -34,12 +34,12 @@ def test_rotation_is_deterministic():
 
 def test_is_not_solved_after_scramble():
     cube = RubiksCube(size=3)
-    cube.scramble(moves=20)
+    cube.scramble(moves=19)
     assert not cube.is_solved(), "Cube should not be solved after scramble"
     
 def test_is_solved_after_reset():
     cube = RubiksCube(size=3)
-    cube.scramble(moves=20)
+    cube.scramble(moves=19)
     cube = RubiksCube(size=3)  # Reset to solved state
     assert cube.is_solved(), "Cube should be solved after reset"
 

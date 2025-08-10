@@ -6,7 +6,6 @@ import torch.nn as nn
 import torch.optim as optim
 
 def train():
-
     env = RubiksCubeEnv(size=3, scramble_moves=1)
     input_dim = env.observation_space.shape[0]  # 6 * size^2
     output_dim = env.action_space.n  # 12 (6 faces * 2 rotations)
@@ -15,8 +14,8 @@ def train():
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     loss_fn = nn.MSELoss()
 
-    num_episodes = 200
-    max_steps = 500
+    num_episodes = 2000
+    max_steps = 10
     gamma = 0.99
 
     epsilon = 1.0 # Initial exploration rate, 1.0 means 100% exploration, 0.0 means 100% exploitation
