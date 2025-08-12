@@ -53,36 +53,63 @@ FACE_EDGE_MAPPINGS = {
 }
 
 class RubiksCube:
-    def __init__(self, size=3):
+    def __init__(self, size=3, state=None):
         self.size = size
-        self.state = self._create_solved_state(size)
         self.faces = ['U', 'D', 'L', 'R', 'F', 'B']
+        self.state = self._create_solved_state(size) if state is None else state # row major order
         
 
     def _create_solved_state(self, size):
-        # State is a 6 x (size*size) array, each face initialized to a unique integer
-        state = np.zeros((6, self.size * self.size), dtype=int)
-        for i in range(6):  # 6 faces
-            state[i, :] = i
-        return state
+        return np.concatenate([np.full(size * size, i, dtype=int) for i in range(6)])
+    
+    def _face_slice(self, face_idx):
+        start = face_idx * self.size * self.size
+        end = start + self.size * self.size
+        return slice(start, end)
+    
+    def _get_face_as_matrix(self, face_idx):
+        return self.state[self._face_slice(face_idx)].reshape(self.size, self.size)
+    
+    def _set_face_from_matrix(self, face_idx, matrix):
+        self.state[self._face_slice(face_idx)] = matrix.flatten()
+    
+    def _get_row_in_face(self, face, index):
+        face_idx = self.faces.index(face)
+        matrix = self._get_face_as_matrix(face_idx)
+        return matrix[index, :].copy()
+    
+    def _set_row_in_face(self, face, index, new_row):
+        face_idx = self.faces.index(face)
+        matrix = self._get_face_as_matrix(face_idx)
+        matrix[index, :] = new_row
+        self._set_face_from_matrix(face_idx, matrix)
+
+    def _get_col_in_face(self, face, index):
+        face_idx = self.faces.index(face)
+        matrix = self._get_face_as_matrix(face_idx)
+        return matrix[:, index].copy()
+    
+    def _set_col_in_face(self, face, index, new_col):
+        face_idx = self.faces.index(face)
+        matrix = self._get_face_as_matrix(face_idx)
+        matrix[:, index] = new_col
+        self._set_face_from_matrix(face_idx, matrix)
     
     def rotate_face(self, face, clockwise=True):
         face_idx = self.faces.index(face)
         if clockwise:
-            self.state[face_idx] = np.rot90(self._get_face_as_matrix(face_idx), -1).flatten()
+            self._set_face_from_matrix(face_idx, np.rot90(self._get_face_as_matrix(face_idx), -1))
         else:
-            self.state[face_idx] = np.rot90(self._get_face_as_matrix(face_idx), 1).flatten()
-        
+            self._set_face_from_matrix(face_idx, np.rot90(self._get_face_as_matrix(face_idx), 1))
+
         # Rotate adjacent faces
         self._rotate_adjacent_faces(face_idx, clockwise)
 
-            
-
     def _rotate_adjacent_faces(self, face_idx, clockwise):
         if clockwise:
-            mappings = FACE_EDGE_MAPPINGS[self.faces[face_idx]]
-        else:
             mappings = FACE_EDGE_MAPPINGS[self.faces[face_idx]][::-1]
+        else:
+            mappings = FACE_EDGE_MAPPINGS[self.faces[face_idx]]
 
         # Cache the first slice's values before overwriting
         first_face, first_idx, first_is_row, first_reverse = mappings[0]
@@ -119,32 +146,6 @@ class RubiksCube:
             self._set_col_in_face(last_face, last_idx,
                                 temp_values[::-1] if last_reverse else temp_values)
         
-        
-    def _get_face_as_matrix(self, face_idx):
-        return self.state[face_idx].reshape(self.size, self.size)
-    
-    def _get_row_in_face(self, face, index):
-        face_idx = self.faces.index(face)
-        matrix = self._get_face_as_matrix(face_idx)
-        return matrix[index, :].copy()
-    
-    def _set_row_in_face(self, face, index, new_row):
-        face_idx = self.faces.index(face)
-        matrix = self._get_face_as_matrix(face_idx)
-        matrix[index, :] = new_row
-        self.state[face_idx] = matrix.flatten()
-        
-    def _get_col_in_face(self, face, index):
-        face_idx = self.faces.index(face)
-        matrix = self._get_face_as_matrix(face_idx)
-        return matrix[:, index].copy()
-    
-    def _set_col_in_face(self, face, index, new_col):
-        face_idx = self.faces.index(face)
-        matrix = self._get_face_as_matrix(face_idx)
-        matrix[:, index] = new_col
-        self.state[face_idx] = matrix.flatten()
-    
     def scramble(self, moves=20, rng=None):
         rng = rng or random
         for _ in range(moves):
@@ -153,4 +154,7 @@ class RubiksCube:
             self.rotate_face(face, clockwise)
             
     def is_solved(self):
-        return all(len(set(face)) == 1 for face in self.state)
+        return all(
+            np.all(self.state[i * self.size * self.size:(i + 1) * self.size * self.size] == i)
+            for i in range(6)
+        )

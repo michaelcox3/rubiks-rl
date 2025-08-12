@@ -47,9 +47,7 @@ class RubiksCubeEnv(gym.Env):
         print(self.cube.state)
 
     def _get_obs(self):
-        # Flatten the cube state to a 1D array
-        # For a 3x3 cube, shape will be (6, 9) -> flattened to (54,)
-        return self.cube.state.flatten()
+        return self.cube.state
 
     def _is_solved(self):
         return self.cube.is_solved()
