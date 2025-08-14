@@ -60,8 +60,8 @@ class RubiksCube:
         
 
     def _create_solved_state(self, size):
-        return np.concatenate([np.full(size * size, i, dtype=int) for i in range(6)])
-    
+        return np.concatenate([np.full(size * size, i, dtype=int) for i in range(6)]) # 1D array of solved state
+
     def _face_slice(self, face_idx):
         start = face_idx * self.size * self.size
         end = start + self.size * self.size

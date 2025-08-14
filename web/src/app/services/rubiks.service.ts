@@ -3,14 +3,26 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 
+export type Move = 'U' | 'U\'' | 'D' | 'D\'' | 'L' | 'L\'' | 'R' | 'R\'' | 'F' | 'F\'' | 'B' | 'B\'';
+
+export interface CubeState {
+    state: number[];
+}
+
+export interface CubePredictResponse {
+    move: Move;
+    confidence: number | null;
+}
+
 @Injectable({
     providedIn: 'root',
 })
 export class RubiksService {
-    private apiUrl = 'http://localhost:8000/';
+    private apiUrl = 'http://localhost:8000';
 
     // BehaviorSubject to hold the cube state
     private cubeStateSubject = new BehaviorSubject<number[] | null>(null);
+    private cubeMoveLog: Move[] = [];
 
     constructor(private http: HttpClient) {
         // Initialize the cube state
@@ -29,28 +41,29 @@ export class RubiksService {
         this.cubeStateSubject.next(cubeState); // make it reactive
     }
 
-    scrambleCube(): Observable<number[]> {
-        return this.http.post<number[]>(`${this.apiUrl}/scramble`, {}).pipe(
-            map((data: number[]) => {
-                this.setCubeState(data);
+    scrambleCube(): Observable<CubeState> {
+        return this.http.post<CubeState>(`${this.apiUrl}/cube/scramble`, {}).pipe(
+            map((data: CubeState) => {
+                this.setCubeState(data.state);
                 return data;
             })
         );
     }
 
-    rotateCube(): Observable<number[]> {
-        return this.http.post<number[]>(`${this.apiUrl}/rotate`, {}).pipe(
-            map((data: number[]) => {
-                this.setCubeState(data);
+    rotateCube(move: Move): Observable<CubeState> {
+        return this.http.post<CubeState>(`${this.apiUrl}/cube/rotate`, { state: this.currentCubeState, move }).pipe(
+            map((data: CubeState) => {
+                this.setCubeState(data.state);
+                this.cubeMoveLog.push(move); // Log the move
                 return data;
             })
         );
     }
 
-    getSolution(): Observable<number[]> {
-        return this.http.get<number[]>(`${this.apiUrl}/solution`).pipe(
-            map((data: number[]) => {
-                this.setCubeState(data);
+    predictMove(): Observable<CubePredictResponse> {
+        return this.http.post<CubePredictResponse>(`${this.apiUrl}/cube/predict-move`, { state: this.currentCubeState }).pipe(
+            map((data: CubePredictResponse) => {
+                this.rotateCube(data.move).subscribe();
                 return data;
             })
         );

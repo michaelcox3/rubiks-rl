@@ -21,7 +21,7 @@ export class RubiksComponent {
 
     @ViewChild('canvasContainer', { static: true }) canvasContainer!: ElementRef;
 
-    constructor(private rubixService: RubiksService) {
+    constructor(private rubiksService: RubiksService) {
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera();
 
@@ -31,15 +31,15 @@ export class RubiksComponent {
     }
 
     scrambleCube() {
-        this.rubixService.scrambleCube().subscribe();
+        this.rubiksService.scrambleCube().subscribe();
     }
 
     resetCube() {
-        this.rubixService.resetCube();
+        this.rubiksService.resetCube();
     }
 
-    solveCube() {
-        this.rubixService.getSolution().subscribe();
+    predictMove() {
+        this.rubiksService.predictMove().subscribe();
     }
 
     ngAfterViewInit() {
@@ -52,18 +52,17 @@ export class RubiksComponent {
         this.camera.position.z = 10; // Set the camera position to see the cube
 
         // Subscribe to ws messages to update the cube state
-        // rubix refers to the CubeData object that is returned from the RubixService
+        // rubiks refers to the CubeData object that is returned from the rubiksService
         // This will update the cube state whenever a new message is received
-        this.rubixService.getCubeState$().subscribe((rubix) => {
-            if (rubix) {
-                this.updateCube(rubix);
+        this.rubiksService.getCubeState$().subscribe((rubiks) => {
+            if (rubiks) {
+                this.updateCube(rubiks);
             }
         });
 
     }
 
-    updateCube(rubix: number[]) {
-        console.log('Fetched Rubix Cube State:', rubix);
+    updateCube(rubiks: number[]) {
         const size = 1.0; // Size of each square on the cube
         const colorToHex: number[] = [
             0xFFFFFF, // White
@@ -98,7 +97,7 @@ export class RubiksComponent {
         ];
 
         this.meshGroup = new THREE.Group();
-        const n = rubix.length;
+        const n = rubiks.length;
         const faceCount = Math.floor(n / 9);
         for (let i = 0; i < faceCount; i++) {
             const faceIndex = i;
@@ -106,7 +105,7 @@ export class RubiksComponent {
             const faceRotation = colorToRotation[faceIndex];
 
             for (let j = 0; j < 9; j++) {
-                const squareColor = rubix[i * 9 + j];
+                const squareColor = rubiks[i * 9 + j];
                 const squareColorHex = colorToHex[squareColor];
                 const row = Math.floor(j / 3);
                 const col = j % 3;

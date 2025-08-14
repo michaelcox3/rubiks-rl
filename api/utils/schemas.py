@@ -26,3 +26,12 @@ class CubePredictResponse(BaseModel):
 class CubeRotateRequest(CubeStateRequest):
     move: Literal["U","U'","D","D'","L","L'","R","R'","F","F'","B","B'"]
 
+class CubeScrambleRequest(BaseModel):
+    moves: int = 20  # default scramble length
+
+    @field_validator("moves")
+    @classmethod
+    def _validate_moves(cls, v: int) -> int:
+        if v < 1 or v > 100:
+            raise ValueError("moves must be between 1 and 100")
+        return v
