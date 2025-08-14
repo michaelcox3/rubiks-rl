@@ -213,6 +213,5 @@ __marimo__/
 
 
 
-# custom ignores
-# Ignore artifacts directory
-artifacts/
+# Ignore pt files
+*.pt

@@ -5,8 +5,9 @@ from rubiks.cube import RubiksCube
 def test_initial_state_is_solved():
     cube = RubiksCube(size=3)
     # Each face should have the same value across all stickers
-    for face in cube.state:
-        assert len(set(face)) == 1, f"Face not uniform: {face}"
+    for i, face in enumerate(cube.faces):
+        face_stickers = cube.state[i * 9:(i + 1) * 9]
+        assert np.all(face_stickers == i), f"Face {face} is not uniform in the solved state"
 
 def test_face_rotation_changes_face():
     cube = RubiksCube(size=3)

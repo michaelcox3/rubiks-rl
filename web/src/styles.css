@@ -1,0 +1,22 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Set background to black */
+body {
+    background-color: #000000;
+}
+
+button {
+    background-color: #ffffff;
+    color: #000000;
+    border: none;
+    padding: 10px 20px;
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    &:hover {
+        background-color: #eeeeee;
+    }
+    &:active {
+        background-color: #cccccc;
+    }
+}
