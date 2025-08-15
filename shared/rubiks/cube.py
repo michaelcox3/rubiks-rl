@@ -34,12 +34,12 @@ FACE_EDGE_MAPPINGS = {
     ],
     'B': [  # back face
         ('U', 0, True, False),
-        ('L', 0, False, False),
-        ('D', -1, True, True),
+        ('L', 0, False, True),
+        ('D', -1, True, False),
         ('R', -1, False, True),
     ],
     'L': [  # left face
-        ('U', 0, False, False),
+        ('U', 0, False, True),
         ('F', 0, False, False),
         ('D', 0, False, False),
         ('B', -1, False, True),
@@ -47,7 +47,7 @@ FACE_EDGE_MAPPINGS = {
     'R': [  # right face
         ('U', -1, False, False),
         ('B', 0, False, True),
-        ('D', -1, False, False),
+        ('D', -1, False, True),
         ('F', -1, False, False),
     ],
 }

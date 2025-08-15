@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RubiksComponent } from './components/rubix/rubiks.component';
+import { RubiksComponent } from './components/rubiks/rubiks.component';
 
 @Component({
   selector: 'app-root',

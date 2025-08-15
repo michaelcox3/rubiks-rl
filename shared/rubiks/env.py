@@ -1,7 +1,7 @@
 import gymnasium as gym
 from gymnasium import spaces
 import numpy as np
-from rubiks.cube import RubiksCube
+from .cube import RubiksCube
 
 class RubiksCubeEnv(gym.Env):
     def __init__(self, size=3, scramble_moves=10):
@@ -26,7 +26,13 @@ class RubiksCubeEnv(gym.Env):
     def reset(self, *, seed=None, options=None):
         super().reset(seed=seed)
         self.cube = RubiksCube(self.size)
-        self.cube.scramble(moves=self.scramble_moves, rng=self.np_random)
+        
+        # Use scramble_moves from options if provided, otherwise use default
+        scramble_moves = self.scramble_moves
+        if options and 'scramble_moves' in options:
+            scramble_moves = options['scramble_moves']
+
+        self.cube.scramble(moves=scramble_moves, rng=self.np_random)
         return self._get_obs(), {}  # second return is the info dict
 
     def step(self, action):

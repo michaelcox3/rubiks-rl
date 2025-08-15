@@ -1,22 +1,53 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
 
-/* Set background to black */
+html,
 body {
-    background-color: #000000;
+    @apply bg-black text-white;
 }
 
-button {
-    background-color: #ffffff;
-    color: #000000;
-    border: none;
-    padding: 10px 20px;
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    &:hover {
-        background-color: #eeeeee;
+@layer base {
+    h1 {
+        @apply text-4xl font-bold
     }
-    &:active {
-        background-color: #cccccc;
+    
+    h2 {
+        @apply text-2xl
+    }
+    
+    hr {
+        @apply my-5 w-full border-t border-gray-600;
+    }
+
+    button {
+        @apply inline-block px-4 py-2 rounded-lg font-medium text-white 
+        bg-slate-600 hover:bg-slate-700 active:bg-slate-800 
+        transition duration-100 ease-in-out 
+        disabled:opacity-50;
+    }
+}
+
+@layer components {
+    .btn-red {
+        @apply bg-red-600 hover:bg-red-700;
+    }
+
+    .btn-orange {
+        @apply bg-orange-600 hover:bg-orange-700;
+    }
+
+    .btn-green {
+        @apply bg-green-600 hover:bg-green-700;
+    }
+
+    .btn-yellow {
+        @apply bg-yellow-600 hover:bg-yellow-700;
+    }
+
+    .btn-blue {
+        @apply bg-blue-600 hover:bg-blue-700;
+    }
+
+    .btn-white {
+        @apply bg-white text-black hover:bg-gray-100;
     }
 }

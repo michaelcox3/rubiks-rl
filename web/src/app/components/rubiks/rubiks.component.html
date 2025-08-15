@@ -1,0 +1,17 @@
+<div class="flex-col justify-center">
+  <div class="flex-grow">
+    <div #canvasContainer></div>
+  </div>
+  <div class="flex justify-center gap-x-3">
+    <button (click)="scrambleCube()">Scramble</button>
+    <button (click)="resetCube()">Reset</button>
+    <button (click)="predictMove()">Predict Move</button>
+  </div>
+  <div class="flex flex-col items-center mt-4">
+    <div class="grid grid-cols-6 gap-3 justify-center">
+      <button *ngFor="let move of allMoves" class="w-16" [ngClass]="getMoveColorClass(move)" (click)="rotateCube(move)">
+        <span>{{ move }}</span>
+      </button>
+    </div>
+  </div>
+</div>
