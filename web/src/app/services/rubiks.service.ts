@@ -42,7 +42,7 @@ export class RubiksService {
     }
 
     scrambleCube(): Observable<CubeState> {
-        return this.http.post<CubeState>(`${this.apiUrl}/cube/scramble`, { moves: 1 }).pipe(
+        return this.http.post<CubeState>(`${this.apiUrl}/cube/scramble`, { moves: 10 }).pipe(
             map((data: CubeState) => {
                 this.setCubeState(data.state);
                 return data;
